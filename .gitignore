@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Local databases & exports
+*.db
+local_scraper.db
+test_output.csv
+
+# Environment variables
+.env
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
