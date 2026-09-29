@@ -28,6 +28,7 @@ from database.repository import (
     create_item,
     update_item,
     delete_item,
+    delete_all_items,
     get_table_schema
 )
 from scraper.dynamic_detector import detect_dynamic_website
@@ -189,6 +190,13 @@ def delete_item_endpoint(item_id: int):
     if not success:
         raise HTTPException(status_code=404, detail=f"Item with ID {item_id} not found.")
     return {"success": True, "message": f"Item {item_id} successfully deleted."}
+
+@app.delete("/api/items", summary="Delete All Records")
+def delete_all_items_endpoint():
+    """Clears all records from the database and resets ID counter."""
+    delete_all_items()
+    return {"success": True, "message": "All database records have been deleted."}
+
 
 # --- Database Schema Introspection Endpoint ---
 

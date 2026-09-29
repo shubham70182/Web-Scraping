@@ -207,7 +207,75 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("crudSearchInput").addEventListener("input", () => { currentOffset = 0; loadRecords(); });
   document.getElementById("crudUrlFilter").addEventListener("input", () => { currentOffset = 0; loadRecords(); });
   document.getElementById("crudTypeFilter").addEventListener("change", () => { currentOffset = 0; loadRecords(); });
-  document.getElementById("btnRefreshCrud").addEventListener("click", loadRecords);
+  // Handle Refresh CRUD with visual feedback
+  window.handleRefreshCrud = async function(btn) {
+    if (!btn) btn = document.getElementById("btnRefreshCrud");
+    const origHtml = btn ? btn.innerHTML : "🔄 Refresh";
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `🔄 Refreshing...`;
+    }
+    try {
+      await loadRecords();
+      if (btn) {
+        btn.innerHTML = `✅ Refreshed!`;
+        setTimeout(() => {
+          btn.innerHTML = origHtml;
+          btn.disabled = false;
+        }, 1000);
+      }
+    } catch (err) {
+      console.error("Refresh error:", err);
+      if (btn) {
+        btn.innerHTML = origHtml;
+        btn.disabled = false;
+      }
+    }
+  };
+
+  // Handle Clear All Records
+  window.handleClearAllRecords = async function(btn) {
+    if (!btn) btn = document.getElementById("btnClearAllRecords");
+    const confirmed = confirm(
+      "⚠️ DANGER: Are you sure you want to delete ALL records from the database?\n\nThis will permanently delete all stored data and reset the ID sequence back to 1."
+    );
+    if (!confirmed) return;
+
+    const origHtml = btn ? btn.innerHTML : "🗑️ Clear All";
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `⏳ Clearing...`;
+    }
+
+    try {
+      const response = await fetch("/api/items", { method: "DELETE" });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        currentOffset = 0;
+        await loadRecords();
+        alert("✅ All records successfully deleted from the database!");
+      } else {
+        alert("Failed to delete records: " + (data.message || response.statusText));
+      }
+    } catch (err) {
+      alert("Error clearing database: " + err.message);
+    } finally {
+      if (btn) {
+        btn.innerHTML = origHtml;
+        btn.disabled = false;
+      }
+    }
+  };
+
+  const btnRefreshCrud = document.getElementById("btnRefreshCrud");
+  if (btnRefreshCrud) {
+    btnRefreshCrud.addEventListener("click", () => window.handleRefreshCrud(btnRefreshCrud));
+  }
+
+  const btnClearAll = document.getElementById("btnClearAllRecords");
+  if (btnClearAll) {
+    btnClearAll.addEventListener("click", () => window.handleClearAllRecords(btnClearAll));
+  }
 
   // Pagination
   document.getElementById("btnPrevPage").addEventListener("click", () => {

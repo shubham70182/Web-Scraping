@@ -186,8 +186,11 @@
             <button id="btnOpenCreateModal" class="btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.85rem;">
               ➕ Add Record Manually
             </button>
-            <button id="btnRefreshCrud" class="btn-secondary" style="padding: 0.55rem 1rem; font-size: 0.85rem;">
+            <button id="btnRefreshCrud" class="btn-secondary" onclick="window.handleRefreshCrud(this)" style="padding: 0.55rem 1rem; font-size: 0.85rem;">
               🔄 Refresh
+            </button>
+            <button id="btnClearAllRecords" class="btn-danger" onclick="window.handleClearAllRecords(this)" style="padding: 0.55rem 1rem; font-size: 0.85rem; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.35rem;" title="Delete all records from database">
+              🗑️ Clear All
             </button>
           </div>
         </div>
@@ -313,6 +316,6 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
 
-  <script src="/static/js/app.js"></script>
+  <script src="/static/js/app.js?v=2.1"></script>
 </body>
 </html>

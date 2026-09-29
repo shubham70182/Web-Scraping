@@ -188,6 +188,24 @@ def delete_item(item_id: int) -> bool:
         cur.close()
         conn.close()
 
+def delete_all_items() -> bool:
+    """Deletes all records from the database and resets ID sequence."""
+    conn, cur, engine = get_connection()
+    try:
+        if engine == "postgresql":
+            cur.execute("TRUNCATE TABLE scraped_items RESTART IDENTITY CASCADE;")
+        else:
+            cur.execute("DELETE FROM scraped_items;")
+            try:
+                cur.execute("DELETE FROM sqlite_sequence WHERE name='scraped_items';")
+            except Exception:
+                pass
+        conn.commit()
+        return True
+    finally:
+        cur.close()
+        conn.close()
+
 def get_table_schema() -> List[Dict[str, Any]]:
     """
     Introspects the database schema.
