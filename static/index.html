@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScrapeFlow Studio | Universal Dynamic Web Scraper & PostgreSQL API</title>
+  
+  <!-- Modern Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div class="brand-info">
+        <h1>ScrapeFlow Studio</h1>
+        <p>Universal Dynamic Web Scraper & PostgreSQL Engine</p>
+      </div>
+    </div>
+
+    <div class="header-status">
+      <div class="engine-badge" id="engineStatusBadge">
+        <span class="status-dot" id="engineDot"></span>
+        <span id="engineStatusText">Checking Database...</span>
+      </div>
+      <a href="/api/export/csv" class="btn-header" id="btnHeaderExport" title="Direct CSV Download">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Download CSV
+      </a>
+      <a href="/docs" target="_blank" class="btn-header" title="Interactive Swagger UI">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Swagger Docs
+      </a>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs-wrapper">
+    <nav class="nav-tabs">
+      <button class="nav-tab-btn active" data-tab="tab-scraper">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+        </svg>
+        Scraper Studio
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-crud">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+        Stored Records & CRUD
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-schema">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+        </svg>
+        Database Schema
+      </button>
+    </nav>
+  </div>
+
+  <!-- Main App Content -->
+  <main class="main-container">
+
+    <!-- ================= TAB 1: Scraper Studio ================= -->
+    <section id="tab-scraper" class="tab-pane active">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">
+              <span>Universal Web Scraper Studio</span>
+            </h2>
+            <p class="panel-desc">Scrape dynamic websites, inspect JavaScript rendering cues, and persist structured records into PostgreSQL.</p>
+          </div>
+        </div>
+
+        <form id="scrapeForm" class="scraper-form">
+          <div class="url-input-group">
+            <div class="input-with-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <input 
+                type="url" 
+                id="targetUrlInput" 
+                class="main-input" 
+                placeholder="Enter any website URL (e.g., https://quotes.toscrape.com/js/)..." 
+                value="https://quotes.toscrape.com/js/"
+                required
+              >
+            </div>
+
+            <select id="maxItemsSelect" class="max-items-select" title="Maximum items to extract">
+              <option value="5">5 items</option>
+              <option value="10" selected>10 items</option>
+              <option value="25">25 items</option>
+              <option value="50">50 items</option>
+            </select>
+
+            <button type="submit" id="btnScrape" class="btn-primary">
+              <span class="spinner" id="scrapeSpinner"></span>
+              <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Scrape & Store
+            </button>
+
+            <button type="button" id="btnDetect" class="btn-secondary" title="Analyze dynamic tech without storing">
+              <span class="spinner" id="detectSpinner"></span>
+              ⚡ Detect Dynamic
+            </button>
+          </div>
+
+          <!-- Quick presets -->
+          <div class="preset-pills-row">
+            <span class="preset-label">Quick Presets:</span>
+            <button type="button" class="pill-btn" data-url="https://quotes.toscrape.com/js/">⚡ Quotes (Dynamic JS)</button>
+            <button type="button" class="pill-btn" data-url="https://books.toscrape.com/">📚 Books (E-Commerce)</button>
+            <button type="button" class="pill-btn" data-url="https://dummyjson.com/quotes?limit=10">🔗 DummyJSON (API)</button>
+            <button type="button" class="pill-btn" data-url="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population">📊 Wikipedia (Tables)</button>
+          </div>
+        </form>
+
+        <!-- Dynamic Diagnosis Output Card -->
+        <div id="dynamicDiagCard" class="diag-card">
+          <div class="diag-header">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-weight: 700; font-size: 0.95rem;">Dynamic Website Diagnosis:</span>
+              <span id="diagBadge" class="diag-score-badge high">HIGH DYNAMIC</span>
+            </div>
+            <span id="diagScoreText" style="font-size: 0.8rem; color: var(--text-muted);">Dynamic Score: 8/10</span>
+          </div>
+          <div class="tech-tag-container" id="diagTechTags"></div>
+          <ul class="reasons-list" id="diagReasonsList"></ul>
+        </div>
+      </div>
+
+      <!-- Scrape Results View -->
+      <div id="scrapeResultsSection" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 700;">
+            Extracted Records (<span id="resultCount">0</span>) 
+            <span id="strategyBadge" class="item-type-badge" style="background: rgba(99, 102, 241, 0.2); color: #c7d2fe; margin-left: 0.5rem;"></span>
+          </h3>
+          <span style="font-size: 0.825rem; color: var(--text-secondary);">Stored permanently in PostgreSQL</span>
+        </div>
+        <div id="scrapedItemsGrid" class="items-grid"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: Stored Records & CRUD ================= -->
+    <section id="tab-crud" class="tab-pane">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Database Records Explorer</h2>
+            <p class="panel-desc">Perform full CRUD (Create, Read, Update, Delete) operations on records stored in PostgreSQL.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button id="btnOpenCreateModal" class="btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.85rem;">
+              ➕ Add Record Manually
+            </button>
+            <button id="btnRefreshCrud" class="btn-secondary" onclick="window.handleRefreshCrud(this)" style="padding: 0.55rem 1rem; font-size: 0.85rem;">
+              🔄 Refresh
+            </button>
+            <button id="btnClearAllRecords" class="btn-danger" onclick="window.handleClearAllRecords(this)" style="padding: 0.55rem 1rem; font-size: 0.85rem; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.35rem;" title="Delete all records from database">
+              🗑️ Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="filter-bar">
+          <input 
+            type="text" 
+            id="crudSearchInput" 
+            class="filter-input" 
+            placeholder="Search keywords in title, description, or content..."
+          >
+          <input 
+            type="text" 
+            id="crudUrlFilter" 
+            class="filter-input" 
+            placeholder="Filter by source URL..."
+          >
+          <select id="crudTypeFilter" class="filter-input" style="max-width: 220px;">
+            <option value="">All Item Types</option>
+            <option value="dynamic_js_record">Dynamic JS Record</option>
+            <option value="card_item">Card Item</option>
+            <option value="api_record">API Record</option>
+            <option value="table_row">Table Row</option>
+            <option value="custom">Custom Item</option>
+          </select>
+        </div>
+
+        <!-- Stats Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          <span>Showing <strong id="crudDisplayCount" style="color: var(--text-primary);">0</strong> of <strong id="crudTotalCount" style="color: var(--text-primary);">0</strong> total records in database</span>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="btnPrevPage" class="btn-secondary" style="padding: 0.3rem 0.7rem; font-size: 0.75rem;">Previous</button>
+            <button id="btnNextPage" class="btn-secondary" style="padding: 0.3rem 0.7rem; font-size: 0.75rem;">Next</button>
+          </div>
+        </div>
+
+        <!-- Stored Items Grid -->
+        <div id="crudItemsGrid" class="items-grid"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: Database Schema ================= -->
+    <section id="tab-schema" class="tab-pane">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">PostgreSQL Database Schema</h2>
+            <p class="panel-desc">Real-time database introspection querying <code>information_schema.tables</code> and <code>information_schema.columns</code>.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;" id="schemaTablesContainer">
+          <!-- Populated by JavaScript -->
+          <p style="color: var(--text-muted);">Loading database schema...</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= Modal: Edit Record ================= -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Record</h3>
+        <button type="button" class="btn-secondary close-modal" style="padding: 0.3rem 0.6rem;">✕</button>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editItemId">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" id="editTitleInput" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="editDescInput" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Item Type</label>
+          <input type="text" id="editTypeInput" class="form-control">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn-secondary close-modal">Cancel</button>
+          <button type="submit" class="btn-primary">Save Changes (SQL UPDATE)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= Modal: Create Record Manually ================= -->
+  <div id="createModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Record (CRUD - Create)</h3>
+        <button type="button" class="btn-secondary close-modal" style="padding: 0.3rem 0.6rem;">✕</button>
+      </div>
+      <form id="createForm">
+        <div class="form-group">
+          <label class="form-label">Source URL *</label>
+          <input type="url" id="createUrlInput" class="form-control" placeholder="https://example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input type="text" id="createTitleInput" class="form-control" placeholder="Item title or headline" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="createDescInput" class="form-control" placeholder="Brief summary..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Item Type</label>
+          <input type="text" id="createTypeInput" class="form-control" value="custom_item">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn-secondary close-modal">Cancel</button>
+          <button type="submit" class="btn-primary">Insert into Database (SQL INSERT)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="/static/js/app.js?v=2.1"></script>
+</body>
+</html>
